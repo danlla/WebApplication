@@ -19,9 +19,7 @@ services:
       - /var/lib/postgresql/data
     container_name: db
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: danlla/test
     depends_on:
       db:
         condition: service_healthy
