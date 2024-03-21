@@ -7,6 +7,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123
       - PGUSER=postgres
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready", "-d", "postgres"]
       interval: 10s
@@ -20,7 +21,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: backDockerfile
+      dockerfile: Dockerfile
     depends_on:
       db:
         condition: service_healthy
