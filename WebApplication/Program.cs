@@ -1,4 +1,5 @@
 using Npgsql;
+using WebApplication;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
@@ -56,7 +57,7 @@ app.MapGet("/mean_area", (IConfiguration configuration) =>
     while (reader.Read())
         areas.Add(reader.GetInt32(0));
 
-    return Results.Ok();//Results.Ok(ComputeMeanArea(areas));
+    return Results.Ok(Utils.ComputeMeanArea(areas));
 });
 
 Prepare(app.Services.GetService<IConfiguration>() ?? throw new NullReferenceException("Configuration Service is null"));
