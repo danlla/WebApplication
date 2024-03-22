@@ -1,4 +1,7 @@
 name: publish image to github package
+permissions:
+  packages: write
+  contents: read
 on:
   release:
     types: [created]
