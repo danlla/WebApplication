@@ -24,4 +24,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: danlla/test:${{ github.event.release.tag_name }}
+          tags: danlla/test:${{ github.event.release.tag_name }} danlla/test:latest
