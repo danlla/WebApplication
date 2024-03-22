@@ -5,6 +5,8 @@ on:
     types: [created]
 
 jobs:
+  call_workflow_build_and_test:
+    uses: ./.github/workflows/dotnet-build-and-test.yml
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -24,4 +26,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: test/${{ github.event.release.tag_name }}
+          tags: danlla/test:${{ github.event.release.tag_name }} , danlla/test:latest
