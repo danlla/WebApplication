@@ -5,7 +5,7 @@ on:
     types: [created]
 
 jobs:
-  call-workflow-build-and-test:
+  call_workflow_build_and_test:
     uses: ./.github/workflows/dotnet-build-and-test.yml
   push_to_registry:
     name: Push Docker image to Docker Hub
