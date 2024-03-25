@@ -26,6 +26,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.Map("/", () => Results.LocalRedirect("/data"));
 app.MapGet("/data", (IConfiguration configuration) =>
 {
     var connectionString = configuration.GetConnectionString("Database");
