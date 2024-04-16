@@ -27,5 +27,5 @@ services:
       - "8080:8080"
       - "8081:8081"
     environment:
-    - "ConnectionStrings:Database=Host=host.docker.internal;User Id=postgres;Password=123;Database=postgres;Port=5432;Pooling=false"
+    - "ConnectionStrings:Database=Host=db;User Id=postgres;Password=123;Database=postgres;Port=5432;Pooling=false"
     container_name: app
