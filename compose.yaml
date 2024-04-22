@@ -1,5 +1,6 @@
 name: webapp
 services:
+
   db:
     image: postgres:latest
     environment:
@@ -18,6 +19,7 @@ services:
     volumes:
       - /var/lib/postgresql/data
     container_name: db
+    
   app:
     image: danlla/test
     depends_on:
@@ -27,5 +29,47 @@ services:
       - "8080:8080"
       - "8081:8081"
     environment:
-    - "ConnectionStrings:Database=Host=host.docker.internal;User Id=postgres;Password=123;Database=postgres;Port=5432;Pooling=false"
+    - "ConnectionStrings:Database=Host=db;User Id=postgres;Password=123;Database=postgres;Port=5432;Pooling=false"
     container_name: app
+    
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prom_data:/prometheus
+  grafana:
+    image: grafana/grafana:8.5.27
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - ./grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      #added dashboards
+      - ./grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/main.yml
+      - ./grafana/postgres.json:/var/lib/grafana/dashboards/postgres.json
+      
+  exporter:
+    image: bitnami/postgres-exporter:latest
+    container_name: postgres-exporter
+    environment:
+      - DATA_SOURCE_URI=db:5432/postgres?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=123
+    ports:
+      - "9187:9187"
+    depends_on:
+      db:
+        condition: service_healthy
+      
+volumes:
+  prom_data:
