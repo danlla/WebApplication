@@ -1,0 +1,12 @@
+groups:
+- name: test
+  rules: 
+    - alert: "[Group: LastName Name: Test Alert]"
+      expr: test_counter >= 2
+      for: 3s
+      labels:
+        severity: warning
+      annotations:
+        summary:  Test counter more than 2
+        description: Someone call /inc_counter two or more time and now test counter equal {{ $value }}
+          
