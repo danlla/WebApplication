@@ -1,10 +1,14 @@
 using Npgsql;
+using Prometheus;
 using WebApplication;
 
 var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks()
+    .AddCheck<SampleHealthCheck>(nameof(SampleHealthCheck))
+    .ForwardToPrometheus();
 
 builder.Services.AddCors(policy => policy.AddPolicy("default", opt =>
 {
@@ -24,7 +28,9 @@ if (app.Environment.IsDevelopment())
     app.UseCors("default");
 }
 
+app.UseRouting();
 app.UseHttpsRedirection();
+app.MapMetrics();
 
 app.Map("/", () => Results.LocalRedirect("/data"));
 app.MapGet("/data", (IConfiguration configuration) =>
@@ -61,7 +67,14 @@ app.MapGet("/mean_area", (IConfiguration configuration) =>
     return Results.Ok(Utils.ComputeMeanArea(areas));
 });
 
+app.MapGet("/inc_counter", () =>
+{
+    Counters.TestCounter.Inc();
+    return Results.Ok(Counters.TestCounter.Value);
+});
+
 Prepare(app.Services.GetService<IConfiguration>() ?? throw new NullReferenceException("Configuration Service is null"));
+Counters.TestCounter.Publish();
 
 app.Run();
 
